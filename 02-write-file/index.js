@@ -7,7 +7,7 @@ const fout = fs.createWriteStream(fileFromConsole);
 
 stdout.write('Hello! Enter text below:\n');
 stdin.on('data', (data) => {
-  if (data.toString().trim().toLowerCase() === 'exit') process.exit();
+  if (data.toString().trim() === 'exit') process.exit();
   fout.write(data);
 });
 

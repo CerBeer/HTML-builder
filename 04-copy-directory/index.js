@@ -8,7 +8,6 @@ const { COPYFILE_EXCL } = require('fs').constants.COPYFILE_EXCL;
 const basePath = './04-copy-directory';
 const folder = path.join(basePath, 'files');
 const foldercopy = path.join(basePath, 'files-copy');
-const foldercopy2 = path.join(basePath, 'files-copy2');
 
 const rmDir = async (destination) => {
   await rm(destination, { force: true, recursive: true }, (err) => {
