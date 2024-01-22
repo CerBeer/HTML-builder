@@ -29,16 +29,16 @@ const makeDir = async (destination) => {
 };
 
 const copyDir = async (source, destination) => {
-  const dirEntri = await readdir(source, { withFileTypes: true });
   await mkdir(destination, { recursive: true });
+  const dirEntry = await readdir(source, { withFileTypes: true });
 
   return Promise.all(
-    dirEntri.map(async (entry) => {
+    dirEntry.map(async (entry) => {
       const sourcePath = path.join(source, entry.name);
-      const destinPath = path.join(destination, entry.name);
+      const destPath = path.join(destination, entry.name);
 
-      if (entry.isDirectory()) copyDir(sourcePath, destinPath);
-      else copyFile(sourcePath, destinPath);
+      if (entry.isDirectory()) copyDir(sourcePath, destPath);
+      else copyFile(sourcePath, destPath);
     }),
   );
 };
@@ -100,7 +100,8 @@ function createFromTemplate(template, components, fileWriteStream) {
     });
 
     if (fileName === undefined) {
-      fileWriteStream.write(`{{${dataAndComponent[1]}}}NotFound`);
+      fileWriteStream.write(`{{${dataAndComponent[1]}}}`);
+      appendComponent(dataBeforeRightBr, components, fileWriteStream);
       return;
     }
     const currentReadStream = createReadStream(fileName);
