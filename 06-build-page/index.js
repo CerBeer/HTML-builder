@@ -3,7 +3,8 @@ const { rm } = require('fs').promises;
 const { mkdir } = require('fs').promises;
 const { readdir } = require('fs').promises;
 const { copyFile } = require('fs').promises;
-const fs = require('fs');
+const { createReadStream } = require('fs');
+const { createWriteStream } = require('fs');
 
 const basePath = './06-build-page';
 const projectFolder = path.join(basePath, 'project-dist');
@@ -63,7 +64,7 @@ function mergeFiles(files, fileWriteStream) {
   const currentFile = files.shift();
   // fileWriteStream.write(`\n/* ${currentFile} */\n`);
 
-  const currentReadStream = fs.createReadStream(currentFile);
+  const currentReadStream = createReadStream(currentFile);
 
   currentReadStream.pipe(fileWriteStream, { end: false });
   currentReadStream.on('end', function () {
@@ -77,7 +78,7 @@ function mergeFiles(files, fileWriteStream) {
 }
 
 function createFromTemplate(template, components, fileWriteStream) {
-  const currentReadStream = fs.createReadStream(template);
+  const currentReadStream = createReadStream(template);
   currentReadStream.on('data', (data) => {
     const dataBeforeRightBr = data.toString().split('}}');
     appendComponent(dataBeforeRightBr, components, fileWriteStream);
@@ -102,7 +103,7 @@ function createFromTemplate(template, components, fileWriteStream) {
       fileWriteStream.write(`{{${dataAndComponent[1]}}}NotFound`);
       return;
     }
-    const currentReadStream = fs.createReadStream(fileName);
+    const currentReadStream = createReadStream(fileName);
 
     currentReadStream.pipe(fileWriteStream, { end: false });
     currentReadStream.on('end', function () {
@@ -122,11 +123,11 @@ rmDir(projectFolder)
   .then(() => getFiles(cssSrcFolder, '.css'))
   .then((files) => {
     files.sort();
-    const fileWriteStream = fs.createWriteStream(cssDstFile);
+    const fileWriteStream = createWriteStream(cssDstFile);
     mergeFiles(files, fileWriteStream);
   })
   .then(() => getFiles(htmlComponentsFolder, '.html'))
   .then((files) => {
-    const fileWriteStream = fs.createWriteStream(htmlDstFile);
+    const fileWriteStream = createWriteStream(htmlDstFile);
     createFromTemplate(htmlTemplate, files, fileWriteStream);
   });
